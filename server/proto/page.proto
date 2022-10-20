@@ -1,0 +1,63 @@
+syntax = "proto3";
+package page;
+import "google/protobuf/timestamp.proto";
+
+service Page {
+    rpc GetPage (PageRequest) returns (PageReply);
+}
+
+message PageRequest {
+    string name = 1;
+}
+
+message PageReply {
+    string name = 1;
+    google.protobuf.Timestamp time = 2;
+    repeated Block blocks = 3;
+    string version = 4;
+}
+ 
+message Block {
+    oneof block {
+        ParagraphBlock paragraphBlock = 1;
+        HeaderBlock headerBlock = 2;
+        ListBlock listBlock = 3;
+    }
+}
+
+message ParagraphBlock {
+    string id = 1;
+    string type = 2;
+    ParagraphData data = 3;
+}
+
+message HeaderBlock {
+    string id = 1;
+    string type = 2;
+    HeaderData data = 3;
+}
+
+message ListBlock {
+    string id = 1;
+    string type = 2;
+    ListData data = 3;
+}
+
+message ParagraphData {
+    string text = 1;
+}
+
+message HeaderData {
+    string text = 1;
+    int32 level = 2;
+}
+
+enum ListStyle {
+    UNORDERED = 0;
+    ORDERED = 1;
+}
+
+message ListData {
+    ListStyle style = 1;
+    repeated string items = 2;
+}

@@ -1,0 +1,19 @@
+[package]
+name = "grpc_server"
+version = "0.1.0"
+edition = "2021"
+authors = ["Christopher Scholz <github@christopher-scholz.com>"]
+description = "gRPC API Server of the static personal website for Christopher Scholz, which is build with Tonic."
+repository = "https://github.com/christopherscholz/rust_graphql_website/server"
+license = "MIT"
+
+[dependencies]
+tonic = "0.8"
+tonic-web = "0.4.0"
+prost = "0.11"
+prost-types = "0.11.1"
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+uuid = { version="1.2.1", features = ["v4"] }
+
+[build-dependencies]
+tonic-build = "0.8"
