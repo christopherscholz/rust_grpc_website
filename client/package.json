@@ -11,6 +11,7 @@
     "react-scripts": "^5.0.1"
   },
   "scripts": {
+    "postinstall": "protoc --proto_path=proto page.proto --grpc-web_out=import_style=commonjs,mode=grpcweb:src/pages --js_out=import_style=commonjs,binary:src/pages",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject"

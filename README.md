@@ -4,25 +4,34 @@ Personal Multi-Page-Website with client server separation using a gRPC-web API f
 
 The app can be run locally or via docker.
 
+prerequisites for local setup (docker sets them up automatically)
+* protoc installed https://github.com/protocolbuffers/protobuf/releases
+* protobuf grpc-web generator installed https://github.com/grpc/grpc-web/releases/tag/1.4.1
+* protobuf-javascript generator installed https://github.com/protocolbuffers/protobuf-javascript/releases
+
 For the `local` setup run
 * server
     ```
     cd server
     cargo run
     ```
-* client
+* client (using react-script)
     ```
     cd client
+    npm install
+    npm start
+    ```
+* client (using express)
+    ```
+    cd client
+    npm install
+    npm run build
+    cd express
+    npm install
     npm start
     ```
 
 For the `docker` setup run
 ```
 docker-compose up
-```
-
-The javascript proto Client stub is generated via 
-```
-cd client
-protoc --proto_path=proto page.proto --grpc-web_out=import_style=commonjs,mode=grpcweb:src/pages --js_out=import_style=commonjs,binary:src/pages
 ```
