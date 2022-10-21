@@ -23,19 +23,14 @@ RUN cargo build --target x86_64-unknown-linux-musl --release
 
 ################
 ##### Runtime
-FROM alpine as runner
+FROM gcr.io/distroless/static-debian11 as runner
 
 # get binary
-COPY --from=builder /usr/src/app/target/x86_64-unknown-linux-musl/release/grpc_server /usr/local/bin
-
-# create rust user
-RUN addgroup -g 1000 rust && \
-    adduser -u 1000 -G rust -s /bin/sh -D rust
+COPY --from=builder /usr/src/app/target/x86_64-unknown-linux-musl/release/grpc_server /
 
 # set run env
-USER rust
 ENV ROCKET_ADDRESS=0.0.0.0
 EXPOSE 8000
 
 # run it
-CMD ["/usr/local/bin/grpc_server"]
+CMD ["/grpc_server"]

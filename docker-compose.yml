@@ -1,11 +1,11 @@
 services:
   server:
-    container_name: server
+    container_name: grpc-web_server
     build: ./server
     ports:
       - "8000:8000"
   client:
-    container_name: client
+    container_name: grpc-web_client
     build: ./client
     ports:
       - "3000:3000"
