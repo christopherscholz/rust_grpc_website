@@ -2,10 +2,6 @@
 ##### Builder
 FROM node:buster as builder
 
-# RUN apt-get update && apt-get install -y \
-#     protobuf-compiler \
-#     libprotobuf-dev
-
 RUN mkdir /home/protobuf && \
     wget https://github.com/protocolbuffers/protobuf/releases/download/v21.8/protoc-21.8-linux-x86_64.zip -O /home/protoc-21.8-linux-x86_64.zip && \
     unzip /home/protoc-21.8-linux-x86_64.zip -d /home/protobuf && \
@@ -26,29 +22,40 @@ RUN npm install --silent && \
     chmod +x /usr/bin/protoc-gen-js
 
 # set working directory
-WORKDIR /app
+WORKDIR /usr/src/app
 
 # add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
+ENV PATH /usr/src/app/node_modules/.bin:$PATH
 
 # install app dependencies
 COPY package.json package-lock.json ./
 COPY src ./src
 COPY proto ./proto
 COPY public ./public
-RUN npm install --silent
+RUN npm install --only=prod --no-optional --silent
 RUN npm run build
+
+COPY express/index.js express/package.json /usr/src/app/express/
+WORKDIR /usr/src/app/express
+RUN npm install --production=true --silent
+
 
 ################
 ##### Runtime
-FROM node:alpine as runner
+FROM alpine:3.16.2 as runner
+RUN addgroup -g 1000 node && \
+    adduser -u 1000 -G node -s /bin/sh -D node
 
-COPY --from=builder /app/build /app/build
-WORKDIR /app
-COPY express /app/express
+RUN apk add --no-cache nodejs-current
+RUN apk add --no-cache dumb-init
 
-WORKDIR /app/express
-RUN npm install --silent
+ENV NODE_ENV production
+
+COPY --from=builder /usr/src/app/build /usr/src/app/build
+COPY --from=builder /usr/src/app/express /usr/src/app/express
+
+WORKDIR /usr/src/app/express
 
 EXPOSE 3000
-CMD ["npm", "start"]
+USER node
+CMD ["dumb-init", "node", "index.js"]
